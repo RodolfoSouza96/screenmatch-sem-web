@@ -20,17 +20,25 @@ public class Main {
 
     private final String ENDERECO = "http://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=935a1529";
+    private List<DadosSerie> dadosSeries = new ArrayList<>();
 
     public void exibeMenu() {
+        var opcao = -1;
+        while(opcao != 0) {
 
-        System.out.print("Digite o nome da série/filme que deseja procurar: ");
-        var nomeSerie = sc.nextLine();
-        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
-        DadosSerie serie = conversor.obterDados(json, DadosSerie.class);
-        System.out.println(serie);
+            var menu = """
+                    1 - Buscar séries
+                    2 - Buscar episódios
+                    3 - Listar séries
+                    
+                    0 - Sair                                 
+                    """;
 
-        List<DadosTemporada> temp = new ArrayList<>();
+            System.out.println(menu);
+            opcao = sc.nextInt();
+            sc.nextLine();
 
+<<<<<<< HEAD
         for (int i = 1; i <= serie.totalTemporadas(); i++) {
             json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + "&season=" + i + API_KEY);
             DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
@@ -114,6 +122,55 @@ public class Main {
 //        System.out.println("Melhor episódio: " + est.getMax());
 //        System.out.println("Pior episódio: " + est.getMin());
 //        System.out.println("Quantidade de episódios: " + est.getCount());
+=======
+            switch (opcao) {
+                case 1:
+                    buscarSerieWeb();
+                    break;
+                case 2:
+                    buscarEpisodioPorSerie();
+                    break;
+                case 3:
+                    listarSeries();
+                    break;
+                case 0:
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opção inválida");
+            }
+        }
+    }
+
+    private void listarSeries() {
+        dadosSeries.forEach(System.out::println);
+    }
+
+    private void buscarSerieWeb() {
+        DadosSerie dados = getDadosSerie();
+        dadosSeries.add(dados);
+        System.out.println(dados);
+    }
+
+    private DadosSerie getDadosSerie() {
+        System.out.print("Digite o nome da série para busca: ");
+        var nomeSerie = sc.nextLine();
+        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
+        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
+        return dados;
+    }
+
+    private void buscarEpisodioPorSerie(){
+        DadosSerie dadosSerie = getDadosSerie();
+        List<DadosTemporada> temporadas = new ArrayList<>();
+
+        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
+            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
+            DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+            temporadas.add(dadosTemporada);
+        }
+        temporadas.forEach(System.out::println);
+>>>>>>> 92e555c2f845d3ce13a25dc112fd3ea148ebe424
 
         sc.close();
 
