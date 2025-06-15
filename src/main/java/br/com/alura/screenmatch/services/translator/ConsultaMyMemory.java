@@ -17,7 +17,7 @@ public class ConsultaMyMemory {
         String texto = URLEncoder.encode(text);
         String langpair = URLEncoder.encode("en|pt-br");
 
-        String url = "https://api.mymemory.translated.net/get?q=" + texto + "&langpair=" + langpair;
+        String url = System.getenv("OPENAI_TRADUTOR") + texto + System.getenv("OPENAI_TRADUTOR2" + langpair);
 
         String json = consumo.obterDados(url);
 
