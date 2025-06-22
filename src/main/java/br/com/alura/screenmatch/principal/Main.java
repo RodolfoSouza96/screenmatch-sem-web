@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-
     Scanner sc = new Scanner(System.in);
     private ConsumoApi consumo = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
@@ -37,6 +36,11 @@ public class Main {
                     1 - Buscar séries
                     2 - Buscar episódios
                     3 - Listar séries
+                    4 - Buscar série por título
+                    5 - Buscar série por ator
+                    6 - Top 5 séries
+                    7 - Buscar por categoria
+                    8 - Buscar por temporadas
                     
                     0 - Sair                                 
                     """;
@@ -56,6 +60,20 @@ public class Main {
                 case 3:
                     listarSeries();
                     break;
+                case 4:
+                    buscarSeriePorTitulo();
+                    break;
+                case 5:
+                    buscarSeriesPorAtor();
+                    break;
+                case 6:
+                    topCincoSeries();
+                    break;
+                case 7:
+                    buscarPorCategoria();
+                    break;
+                case 8:
+                    buscarPorTemporada();
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -100,9 +118,7 @@ public class Main {
         System.out.println("Escolha uma série: ");
         var nomeSerie = sc.nextLine();
 
-        Optional<Serie> serie = series.stream()
-                .filter(s -> s.getTitulo().toLowerCase().contains(nomeSerie.toLowerCase()))
-                .findFirst();
+        Optional<Serie> serie = repositorio.findByTituloContainingIgnoreCase(nomeSerie);
 
         if(serie.isPresent()) {
 
@@ -126,6 +142,57 @@ public class Main {
             System.out.println("Série não encontrada!");
         }
 
+    }
+
+    private void buscarSeriePorTitulo() {
+        System.out.print("Escolha uma série pelo nome: ");
+        var nomeSerie = sc.nextLine();
+        Optional<Serie> serieBuscada = repositorio.findByTituloContainingIgnoreCase(nomeSerie);
+
+        if (serieBuscada.isPresent()) {
+            System.out.println("Dados da série: " + serieBuscada.get());
+        } else {
+            System.out.println("Série não encontrada!!");
+        }
+
+    }
+
+    private void buscarSeriesPorAtor() {
+        System.out.print("Qual o nome para busca: ");
+        var nomeAtor = sc.nextLine();
+        System.out.println("Avaliações a partir de qual valor: ");
+        var avaliacao = sc.nextDouble();
+        List<Serie> seriesEnc = repositorio.findByAtoresContainingIgnoreCaseAndAvaliacaoGreaterThanEqual(nomeAtor, avaliacao);
+        System.out.println("Séries em que " + nomeAtor + " trabalhou: " );
+        seriesEnc.forEach(s ->
+                System.out.println(s.getTitulo() + " - avaliação: " + s.getAvaliacao()));
+
+    }
+
+    private void topCincoSeries() {
+        List<Serie> serieTop = repositorio.findTop5ByOrderByAvaliacaoDesc();
+        serieTop.forEach(s ->
+                System.out.println(s.getTitulo() + " - avaliação: " + s.getAvaliacao()));
+    }
+
+    private void buscarPorCategoria() {
+        System.out.print("Deseja buscar séries de que categoria/gênero: ");
+        var nomeGenero = sc.nextLine();
+        Categoria categoria = Categoria.fromStringPortugues(nomeGenero);
+        List<Serie> seriesPorCategoria = repositorio.findByGenero(categoria);
+        System.out.println("Séries da categoria " + nomeGenero);
+        seriesPorCategoria.forEach(System.out::println);
+
+    }
+
+    private void buscarPorTemporada() {
+        System.out.print("Informe a quantidade de temporadas que deseja em uma série: ");
+        var totalTemporadas = sc.nextInt();
+        System.out.println("Avaliações a partir de qual valor: ");
+        var avaliacao = sc.nextDouble();
+        List<Serie> seriesTemp = repositorio.seriesPorTemporadaEAvaliacao(totalTemporadas, avaliacao);
+        System.out.println("Série pela quantidade de temporada: " + totalTemporadas);
+        seriesTemp.forEach(System.out::println);
     }
 
 

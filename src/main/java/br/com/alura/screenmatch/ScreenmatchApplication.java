@@ -10,9 +10,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
+
+
 
 	@Autowired
 	private SerieRepository repositorio;
