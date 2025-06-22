@@ -74,6 +74,7 @@ public class Main {
                     break;
                 case 8:
                     buscarPorTemporada();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
